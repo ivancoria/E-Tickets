@@ -1,5 +1,7 @@
 package com.ivancoria.etickets.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -10,6 +12,7 @@ import lombok.*;
 @Builder
 public class EventDTO {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @NotEmpty(message = "Nombre del evento requerido")
@@ -33,5 +36,6 @@ public class EventDTO {
     @Digits(integer = 10, fraction = 2, message = "El precio debe tener como máximo 10 enteros y 2 decimales")
     private double price;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long organizerId;
 }

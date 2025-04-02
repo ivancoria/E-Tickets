@@ -1,5 +1,6 @@
 package com.ivancoria.etickets.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ivancoria.etickets.entities.TicketEntity;
 import com.ivancoria.etickets.entities.enums.UserRole;
 import jakarta.validation.constraints.*;
@@ -14,6 +15,7 @@ import java.util.List;
 @Builder
 public class CustomerDTO {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @NotEmpty(message = "Email requerido")
@@ -29,6 +31,7 @@ public class CustomerDTO {
     @Size(min = 8, max = 128, message = "La contraseña debe tener entre 8 y 128 caracteres")
     private String confirmPassword;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UserRole role;
 
     @NotEmpty(message = "Nombre requerido")
@@ -43,6 +46,7 @@ public class CustomerDTO {
     @Pattern(regexp = "MALE|FEMALE|OTHER", message = "El género debe ser MALE, FEMALE o OTHER")
     private String gender;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<TicketEntity> tickets;
 
 

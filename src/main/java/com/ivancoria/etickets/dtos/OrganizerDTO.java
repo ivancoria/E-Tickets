@@ -1,5 +1,6 @@
 package com.ivancoria.etickets.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ivancoria.etickets.entities.EventEntity;
 import com.ivancoria.etickets.entities.enums.UserRole;
 import jakarta.validation.constraints.Email;
@@ -16,6 +17,7 @@ import java.util.List;
 @Builder
 public class OrganizerDTO {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @NotEmpty(message = "Correo requerido")
@@ -31,11 +33,13 @@ public class OrganizerDTO {
     @Size(min = 8, max = 128, message = "La contraseña debe tener entre 8 y 128 caracteres")
     private String confirmPassword;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UserRole role;
 
     @NotEmpty(message = "Nombre del Organizador o Productora requerido")
     @Size(min = 2, max = 32, message = "El nombre del Organizador o Productora debe tener entre 2 y 32 caracteres")
     private String name;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<EventEntity> events;
 }
