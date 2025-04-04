@@ -3,6 +3,7 @@ package com.ivancoria.etickets.controllers;
 import com.ivancoria.etickets.dtos.CustomerDTO;
 import com.ivancoria.etickets.dtos.OrganizerDTO;
 import com.ivancoria.etickets.dtos.requests.LoginRequest;
+import com.ivancoria.etickets.dtos.requests.ResetPasswordRequest;
 import com.ivancoria.etickets.dtos.responses.ApiResponse;
 import com.ivancoria.etickets.dtos.responses.AuthResponse;
 import com.ivancoria.etickets.services.AuthService;
@@ -43,6 +44,13 @@ public class AuthController {
         final AuthResponse authResponse = authService.registerOrganizer(organizerDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse
                 .success(HttpStatus.CREATED.value(), "Registro Exitoso", authResponse));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse<AuthResponse>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        final AuthResponse authResponse = authService.resetPassword(request);
+        return ResponseEntity.ok(ApiResponse
+                .success(HttpStatus.OK.value(), "Contraseña restablecida", authResponse));
     }
 
 

@@ -3,6 +3,7 @@ package com.ivancoria.etickets.services;
 import com.ivancoria.etickets.dtos.CustomerDTO;
 import com.ivancoria.etickets.dtos.OrganizerDTO;
 import com.ivancoria.etickets.dtos.requests.LoginRequest;
+import com.ivancoria.etickets.dtos.requests.ResetPasswordRequest;
 import com.ivancoria.etickets.dtos.responses.AuthResponse;
 import com.ivancoria.etickets.entities.CustomerEntity;
 import com.ivancoria.etickets.entities.OrganizerEntity;
@@ -16,10 +17,13 @@ import com.ivancoria.etickets.mappers.OrganizerMapper;
 import com.ivancoria.etickets.repositories.CustomerRepository;
 import com.ivancoria.etickets.repositories.OrganizerRepository;
 import com.ivancoria.etickets.repositories.UserRepository;
+import org.mapstruct.control.MappingControl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -87,5 +91,16 @@ public class AuthService {
         return AuthResponse.builder()
                 .accessToken(jwtService.generateToken(organizerEntity))
                 .build();
+    }
+
+    public AuthResponse resetPassword(ResetPasswordRequest request) {
+        UserEntity userEntity = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("El Usuario no existe"));
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new PasswordMismatchException("Las contraseñas no coinciden");
+        }
+        userEntity.setPassword(passwordEncoder.encode(request.getPassword()));
+        userRepository.save(userEntity);
+        return AuthResponse.builder().accessToken(null).build();
     }
 }
