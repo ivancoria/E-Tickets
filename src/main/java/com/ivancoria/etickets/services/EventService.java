@@ -1,6 +1,6 @@
 package com.ivancoria.etickets.services;
 
-import com.ivancoria.etickets.dtos.EventDTO;
+import com.ivancoria.etickets.dtos.event.EventDTO;
 import com.ivancoria.etickets.entities.EventEntity;
 import com.ivancoria.etickets.entities.OrganizerEntity;
 import com.ivancoria.etickets.entities.UserEntity;

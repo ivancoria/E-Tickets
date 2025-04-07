@@ -1,6 +1,6 @@
 package com.ivancoria.etickets.controllers;
 
-import com.ivancoria.etickets.dtos.EventDTO;
+import com.ivancoria.etickets.dtos.event.EventDTO;
 import com.ivancoria.etickets.dtos.responses.ApiResponse;
 import com.ivancoria.etickets.services.EventService;
 import jakarta.validation.Valid;

@@ -1,6 +1,6 @@
 package com.ivancoria.etickets.controllers;
 
-import com.ivancoria.etickets.dtos.TicketDTO;
+import com.ivancoria.etickets.dtos.ticket.TicketDTO;
 
 import com.ivancoria.etickets.dtos.responses.ApiResponse;
 import com.ivancoria.etickets.services.TicketService;

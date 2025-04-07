@@ -1,4 +1,4 @@
-package com.ivancoria.etickets.dtos;
+package com.ivancoria.etickets.dtos.ticket;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

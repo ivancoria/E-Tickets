@@ -1,7 +1,7 @@
 package com.ivancoria.etickets.services;
 
-import com.ivancoria.etickets.dtos.CustomerDTO;
-import com.ivancoria.etickets.dtos.OrganizerDTO;
+import com.ivancoria.etickets.dtos.customer.CustomerDTO;
+import com.ivancoria.etickets.dtos.organizer.OrganizerDTO;
 import com.ivancoria.etickets.dtos.requests.LoginRequest;
 import com.ivancoria.etickets.dtos.requests.ResetPasswordRequest;
 import com.ivancoria.etickets.dtos.responses.AuthResponse;
@@ -17,13 +17,10 @@ import com.ivancoria.etickets.mappers.OrganizerMapper;
 import com.ivancoria.etickets.repositories.CustomerRepository;
 import com.ivancoria.etickets.repositories.OrganizerRepository;
 import com.ivancoria.etickets.repositories.UserRepository;
-import org.mapstruct.control.MappingControl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class AuthService {

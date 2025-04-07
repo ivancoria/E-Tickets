@@ -1,7 +1,7 @@
 package com.ivancoria.etickets.controllers;
 
-import com.ivancoria.etickets.dtos.CustomerDTO;
-import com.ivancoria.etickets.dtos.OrganizerDTO;
+import com.ivancoria.etickets.dtos.customer.CustomerDTO;
+import com.ivancoria.etickets.dtos.organizer.OrganizerDTO;
 import com.ivancoria.etickets.dtos.requests.LoginRequest;
 import com.ivancoria.etickets.dtos.requests.ResetPasswordRequest;
 import com.ivancoria.etickets.dtos.responses.ApiResponse;

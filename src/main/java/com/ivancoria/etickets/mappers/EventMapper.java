@@ -1,6 +1,6 @@
 package com.ivancoria.etickets.mappers;
 
-import com.ivancoria.etickets.dtos.EventDTO;
+import com.ivancoria.etickets.dtos.event.EventDTO;
 import com.ivancoria.etickets.entities.EventEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

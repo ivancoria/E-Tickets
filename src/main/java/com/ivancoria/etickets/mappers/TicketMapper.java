@@ -1,6 +1,6 @@
 package com.ivancoria.etickets.mappers;
 
-import com.ivancoria.etickets.dtos.TicketDTO;
+import com.ivancoria.etickets.dtos.ticket.TicketDTO;
 import com.ivancoria.etickets.entities.TicketEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
