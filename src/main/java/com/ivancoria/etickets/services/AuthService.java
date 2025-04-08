@@ -1,7 +1,7 @@
 package com.ivancoria.etickets.services;
 
-import com.ivancoria.etickets.dtos.customer.CustomerDTO;
-import com.ivancoria.etickets.dtos.organizer.OrganizerDTO;
+import com.ivancoria.etickets.dtos.customer.CustomerCreateDTO;
+import com.ivancoria.etickets.dtos.organizer.OrganizerCreateDTO;
 import com.ivancoria.etickets.dtos.requests.LoginRequest;
 import com.ivancoria.etickets.dtos.requests.ResetPasswordRequest;
 import com.ivancoria.etickets.dtos.responses.AuthResponse;
@@ -51,22 +51,21 @@ public class AuthService {
     public AuthResponse login(LoginRequest loginRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginRequest.getEmail(), loginRequest.getPassword()));
-
         UserEntity userEntity = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Credenciales incorrectas"));
         var jwtToken = jwtService.generateToken(userEntity);
         return new AuthResponse(jwtToken);
     }
 
-    public AuthResponse registerCustomer(CustomerDTO customerDTO) {
-        if (userRepository.existsByEmail(customerDTO.getEmail())) {
+    public AuthResponse registerCustomer(CustomerCreateDTO customerCreateDTO) {
+        if (userRepository.existsByEmail(customerCreateDTO.getEmail())) {
             throw new UserAlreadyExistsException("El Email ya esta en uso");
         }
-        if (!customerDTO.getPassword().equals(customerDTO.getConfirmPassword())) {
+        if (!customerCreateDTO.getPassword().equals(customerCreateDTO.getConfirmPassword())) {
             throw new PasswordMismatchException("Las contraseñas no coinciden");
         }
-        customerDTO.setRole(UserRole.CUSTOMER);
-        CustomerEntity customerEntity = customerMapper.dtoToEntity(customerDTO);
+        CustomerEntity customerEntity = customerMapper.createDTOToEntity(customerCreateDTO);
+        customerEntity.setRole(UserRole.CUSTOMER);
         customerEntity.setPassword(passwordEncoder.encode(customerEntity.getPassword()));
         customerRepository.save(customerEntity);
         return AuthResponse.builder()
@@ -74,15 +73,15 @@ public class AuthService {
                 .build();
     }
 
-    public AuthResponse registerOrganizer(OrganizerDTO organizerDTO) {
-        if (userRepository.existsByEmail(organizerDTO.getEmail())) {
+    public AuthResponse registerOrganizer(OrganizerCreateDTO organizerCreateDTO) {
+        if (userRepository.existsByEmail(organizerCreateDTO.getEmail())) {
             throw new UserAlreadyExistsException("El Email ya esta en uso");
         }
-        if (!organizerDTO.getPassword().equals(organizerDTO.getConfirmPassword())) {
+        if (!organizerCreateDTO.getPassword().equals(organizerCreateDTO.getConfirmPassword())) {
             throw new PasswordMismatchException("Las contraseñas no coinciden");
         }
-        organizerDTO.setRole(UserRole.ORGANIZER);
-        OrganizerEntity organizerEntity = organizerMapper.dtoToEntity(organizerDTO);
+        OrganizerEntity organizerEntity = organizerMapper.createDTOToEntity(organizerCreateDTO);
+        organizerEntity.setRole(UserRole.ORGANIZER);
         organizerEntity.setPassword(passwordEncoder.encode(organizerEntity.getPassword()));
         organizerRepository.save(organizerEntity);
         return AuthResponse.builder()
@@ -90,7 +89,7 @@ public class AuthService {
                 .build();
     }
 
-    public AuthResponse resetPassword(ResetPasswordRequest request) {
+    public void resetPassword(ResetPasswordRequest request) {
         UserEntity userEntity = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("El Usuario no existe"));
         if (!request.getPassword().equals(request.getConfirmPassword())) {
@@ -98,6 +97,5 @@ public class AuthService {
         }
         userEntity.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(userEntity);
-        return AuthResponse.builder().accessToken(null).build();
     }
 }

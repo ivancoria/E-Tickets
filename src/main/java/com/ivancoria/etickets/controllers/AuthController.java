@@ -1,7 +1,7 @@
 package com.ivancoria.etickets.controllers;
 
-import com.ivancoria.etickets.dtos.customer.CustomerDTO;
-import com.ivancoria.etickets.dtos.organizer.OrganizerDTO;
+import com.ivancoria.etickets.dtos.customer.CustomerCreateDTO;
+import com.ivancoria.etickets.dtos.organizer.OrganizerCreateDTO;
 import com.ivancoria.etickets.dtos.requests.LoginRequest;
 import com.ivancoria.etickets.dtos.requests.ResetPasswordRequest;
 import com.ivancoria.etickets.dtos.responses.ApiResponse;
@@ -33,26 +33,23 @@ public class AuthController {
     }
 
     @PostMapping("/register/customer")
-    public ResponseEntity<ApiResponse<AuthResponse>> registerCustomer(@Valid @RequestBody CustomerDTO customerDTO){
-        final AuthResponse authResponse = authService.registerCustomer(customerDTO);
+    public ResponseEntity<ApiResponse<AuthResponse>> registerCustomer(@Valid @RequestBody CustomerCreateDTO customerCreateDTO){
+        final AuthResponse authResponse = authService.registerCustomer(customerCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse
                 .success(HttpStatus.CREATED.value(), "Registro Exitoso", authResponse));
     }
 
     @PostMapping("/register/organizer")
-    public ResponseEntity<ApiResponse<AuthResponse>> registerOrganizer(@Valid @RequestBody OrganizerDTO organizerDTO){
-        final AuthResponse authResponse = authService.registerOrganizer(organizerDTO);
+    public ResponseEntity<ApiResponse<AuthResponse>> registerOrganizer(@Valid @RequestBody OrganizerCreateDTO organizerCreateDTO){
+        final AuthResponse authResponse = authService.registerOrganizer(organizerCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse
                 .success(HttpStatus.CREATED.value(), "Registro Exitoso", authResponse));
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<ApiResponse<AuthResponse>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
-        final AuthResponse authResponse = authService.resetPassword(request);
+    public ResponseEntity<ApiResponse<?>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        authService.resetPassword(request);
         return ResponseEntity.ok(ApiResponse
-                .success(HttpStatus.OK.value(), "Contraseña restablecida", authResponse));
+                .success(HttpStatus.OK.value(), "Contraseña restablecida"));
     }
-
-
-
 }

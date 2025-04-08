@@ -1,5 +1,6 @@
 package com.ivancoria.etickets.mappers;
 
+import com.ivancoria.etickets.dtos.organizer.OrganizerCreateDTO;
 import com.ivancoria.etickets.dtos.organizer.OrganizerDTO;
 import com.ivancoria.etickets.dtos.organizer.OrganizerProfileDTO;
 import com.ivancoria.etickets.entities.OrganizerEntity;
@@ -15,4 +16,6 @@ public interface OrganizerMapper {
     OrganizerDTO entityToDTO(OrganizerEntity organizerEntity);
 
     OrganizerProfileDTO entityToProfileDTO(OrganizerEntity organizerEntity);
+
+    OrganizerEntity createDTOToEntity(OrganizerCreateDTO organizerCreateDTO);
 }
