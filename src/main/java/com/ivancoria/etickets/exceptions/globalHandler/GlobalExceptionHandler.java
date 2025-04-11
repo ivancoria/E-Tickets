@@ -1,6 +1,7 @@
 package com.ivancoria.etickets.exceptions.globalHandler;
 
 import com.ivancoria.etickets.dtos.responses.ApiResponse;
+import com.ivancoria.etickets.exceptions.customExceptions.NoDataChangedException;
 import com.ivancoria.etickets.exceptions.customExceptions.PasswordMismatchException;
 import com.ivancoria.etickets.exceptions.customExceptions.ResourceNotFoundException;
 import com.ivancoria.etickets.exceptions.customExceptions.UserAlreadyExistsException;
@@ -52,10 +53,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
     }
 
-
-
-
-
-
+    @ExceptionHandler(NoDataChangedException.class)
+    public ResponseEntity<ApiResponse<String>> handlerNoDataChangedException(NoDataChangedException ex) {
+        ApiResponse<String> apiResponse = ApiResponse
+                .error(HttpStatus.BAD_REQUEST.value(), "BAD_REQUEST", ex.getMessage());
+        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+    }
 
 }
