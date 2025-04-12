@@ -11,7 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/customers")
+@RequestMapping("/api/v1/customers")
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -29,12 +29,12 @@ public class CustomerController {
     }
 
     @PreAuthorize("hasRole('ROLE_CUSTOMER')")
-    @PutMapping("/me/update")
+    @PatchMapping("/me/update")
     public ResponseEntity<ApiResponse<CustomerProfileDTO>> updateCustomer(
             @RequestBody CustomerUpdateDTO customerUpdateDTO, Authentication authentication) {
         final CustomerProfileDTO customer = customerService.updateCustomer(customerUpdateDTO, authentication);
         return ResponseEntity.ok(ApiResponse
-                .success(HttpStatus.OK.value(), "Datos del Usuario actualizados", customer));
+                .success(HttpStatus.OK.value(), "Datos del usuario actualizados", customer));
 
     }
 }
