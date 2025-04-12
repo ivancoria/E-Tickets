@@ -13,8 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class EventService {
 
@@ -50,12 +48,5 @@ public class EventService {
         eventMapper.updateEntityFromDTO(eventDTO, eventEntity);
         EventEntity updatedEvent = eventRepository.save(eventEntity);
         return eventMapper.entityToDTO(updatedEvent);
-    }
-
-    public List<EventDTO> myEvents(Authentication authentication) {
-        String organizerEmail = authentication.getName();
-        Long organizerId = userRepository.findIdByEmail(organizerEmail);
-        List<EventEntity> events = eventRepository.findByOrganizerId(organizerId);
-        return eventMapper.entitiesToDTOs(events);
     }
 }

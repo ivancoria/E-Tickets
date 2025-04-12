@@ -10,8 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/events")
 public class EventController {
@@ -39,22 +37,4 @@ public class EventController {
         return ResponseEntity.ok(ApiResponse
                 .success(HttpStatus.OK.value(), "Evento actualizado", updateEvent));
     }
-
-    @PreAuthorize("hasRole('ROLE_ORGANIZER')")
-    @GetMapping("/my-events")
-    public ResponseEntity<ApiResponse<List<EventDTO>>> myEvents(Authentication authentication) {
-        List<EventDTO> myEvents = eventService.myEvents(authentication);
-        return ResponseEntity.ok(ApiResponse
-                .success(HttpStatus.OK.value(), "Lista de eventos", myEvents));
-    }
-
-
-
-
-
-
-
-
-
-
 }
