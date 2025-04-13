@@ -30,15 +30,4 @@ public class TicketController {
         return ResponseEntity.status(HttpStatus.CREATED.value()).body(ApiResponse
                 .success(HttpStatus.CREATED.value(), "Ticket comprado con exito", ticket));
     }
-
-    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
-    @GetMapping("/my-tickets")
-    public ResponseEntity<ApiResponse<List<TicketDTO>>> myTickets(Authentication authentication){
-        List<TicketDTO> myTickets = ticketService.myTickets(authentication);
-        return ResponseEntity.ok(ApiResponse
-                .success(HttpStatus.OK.value(), "Lista de Tickets", myTickets));
-    }
-
-
-
 }

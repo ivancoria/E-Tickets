@@ -50,14 +50,4 @@ public class TicketService {
 
         return ticketMapper.entityToDTO(ticket);
     }
-
-    public List<TicketDTO> myTickets(Authentication authentication) {
-        String customerEmail = authentication.getName();
-        long customerId = userRepository.findIdByEmail(customerEmail);
-        List<TicketEntity> tickets = ticketRepository.findByCustomerId(customerId);
-        if (tickets.isEmpty()) {
-            throw new ResourceNotFoundException("No se encontraron tickets para este usuario");
-        }
-        return ticketMapper.entitiesToDTOs(tickets);
-    }
 }
