@@ -23,7 +23,7 @@ E-Tickets es una aplicación backend diseñada para la gestión de eventos y ven
 * **Build Tool:** Maven 3.9
 * **Documentación API:** SpringDoc OpenAPI (Swagger UI)
 * **Testing:** _Próximamente..._
-* **Docker:** _Próximamente..._
+* **Docker:** Contenedores configurados para app y base de datos
 
 ## Dependencias
 * JDK 17
