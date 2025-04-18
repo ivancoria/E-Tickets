@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  etickets_db:
+    image: mysql:8.0.33 
+    container_name: etickets_db
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_etickets
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  etickets:
+    build: .
+    mem_limit: 512m
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:mysql://etickets_db:3306/db_etickets?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    restart: always
+    depends_on:
+      etickets_db:
+        condition: service_healthy
