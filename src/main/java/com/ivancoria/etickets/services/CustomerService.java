@@ -6,16 +6,14 @@ import com.ivancoria.etickets.dtos.ticket.TicketDTO;
 import com.ivancoria.etickets.entities.CustomerEntity;
 import com.ivancoria.etickets.entities.TicketEntity;
 import com.ivancoria.etickets.entities.UserEntity;
-import com.ivancoria.etickets.exceptions.customExceptions.NoDataChangedException;
 import com.ivancoria.etickets.exceptions.customExceptions.ResourceNotFoundException;
-import com.ivancoria.etickets.exceptions.customExceptions.UserAlreadyExistsException;
 import com.ivancoria.etickets.mappers.CustomerMapper;
 import com.ivancoria.etickets.mappers.TicketMapper;
 import com.ivancoria.etickets.repositories.CustomerRepository;
 import com.ivancoria.etickets.repositories.TicketRepository;
 import com.ivancoria.etickets.repositories.UserRepository;
+import com.ivancoria.etickets.services.validations.UserValidationService;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +21,7 @@ import java.util.List;
 @Service
 public class CustomerService {
     private final UserRepository userRepository;
+    private final UserValidationService userValidationService;
     private final CustomerRepository customerRepository;
     private final CustomerMapper customerMapper;
     private final TicketRepository ticketRepository;
@@ -30,31 +29,26 @@ public class CustomerService {
 
     public CustomerService(UserRepository userRepository, CustomerRepository customerRepository,
                            CustomerMapper customerMapper, TicketRepository ticketRepository,
-                           TicketMapper ticketMapper) {
+                           TicketMapper ticketMapper, UserValidationService userValidationService) {
         this.userRepository = userRepository;
         this.customerRepository = customerRepository;
         this.customerMapper = customerMapper;
         this.ticketRepository = ticketRepository;
         this.ticketMapper = ticketMapper;
+        this.userValidationService = userValidationService;
     }
 
     public CustomerProfileDTO getMyProfile(Authentication authentication) {
         UserEntity userEntity = (UserEntity) authentication.getPrincipal();
-        CustomerEntity customerEntity = customerRepository.findById(userEntity.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        CustomerEntity customerEntity = (CustomerEntity) userValidationService.validateUser(userEntity.getEmail());
         return customerMapper.entityToProfileDTO(customerEntity);
     }
 
     public CustomerProfileDTO updateCustomer(CustomerUpdateDTO customerUpdateDTO, Authentication authentication) {
         UserEntity userEntity = (UserEntity) authentication.getPrincipal();
-        CustomerEntity customerEntity = customerRepository.findById(userEntity.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
-        if (customerEntity.getEmail().equals(customerUpdateDTO.getEmail())) {
-            throw new NoDataChangedException("El Email es el mismo");
-        }
-        if (userRepository.existsByEmail(customerUpdateDTO.getEmail())) {
-            throw new UserAlreadyExistsException("El Email ya esta en uso");
-        }
+        CustomerEntity customerEntity = userValidationService.validateCustomerById(userEntity.getId());
+        userValidationService.validateEmailHasChanged(customerEntity.getEmail(), customerUpdateDTO.getEmail());
+        userValidationService.validateExistEmail(customerUpdateDTO.getEmail());
         customerMapper.updateDTOToEntity(customerUpdateDTO, customerEntity);
         customerRepository.save(customerEntity);
         return customerMapper.entityToProfileDTO(customerEntity);

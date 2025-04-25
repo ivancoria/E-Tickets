@@ -63,8 +63,8 @@ public class AuthService {
     }
 
     public AuthResponse registerCustomer(CustomerCreateDTO customerCreateDTO) {
-        userValidationService.ValidateExistEmail(customerCreateDTO.getEmail());
-        userValidationService.ValidatePasswordMatch(
+        userValidationService.validateExistEmail(customerCreateDTO.getEmail());
+        userValidationService.validatePasswordMatch(
                 customerCreateDTO.getPassword(), customerCreateDTO.getConfirmPassword());
         CustomerEntity customerEntity = customerMapper.createDTOToEntity(customerCreateDTO);
         customerEntity.setRole(UserRole.CUSTOMER);
@@ -76,8 +76,8 @@ public class AuthService {
     }
 
     public AuthResponse registerOrganizer(OrganizerCreateDTO organizerCreateDTO) {
-        userValidationService.ValidateExistEmail(organizerCreateDTO.getEmail());
-        userValidationService.ValidatePasswordMatch(
+        userValidationService.validateExistEmail(organizerCreateDTO.getEmail());
+        userValidationService.validatePasswordMatch(
                 organizerCreateDTO.getPassword(), organizerCreateDTO.getConfirmPassword());
         OrganizerEntity organizerEntity = organizerMapper.createDTOToEntity(organizerCreateDTO);
         organizerEntity.setRole(UserRole.ORGANIZER);
@@ -89,8 +89,8 @@ public class AuthService {
     }
 
     public void resetPassword(ResetPasswordRequest request) {
-        UserEntity userEntity = userValidationService.ValidateUser(request.getEmail());
-        userValidationService.ValidatePasswordMatch(request.getPassword(), request.getConfirmPassword());
+        UserEntity userEntity = userValidationService.validateUser(request.getEmail());
+        userValidationService.validatePasswordMatch(request.getPassword(), request.getConfirmPassword());
         userEntity.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(userEntity);
     }
