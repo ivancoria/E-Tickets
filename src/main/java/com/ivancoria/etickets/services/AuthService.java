@@ -17,15 +17,19 @@ import com.ivancoria.etickets.mappers.OrganizerMapper;
 import com.ivancoria.etickets.repositories.CustomerRepository;
 import com.ivancoria.etickets.repositories.OrganizerRepository;
 import com.ivancoria.etickets.repositories.UserRepository;
+import com.ivancoria.etickets.services.validations.UserValidationService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
 
 @Service
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final UserValidationService userValidationService;
     private final CustomerRepository customerRepository;
     private final OrganizerRepository organizerRepository;
     private final CustomerMapper customerMapper;
@@ -37,7 +41,8 @@ public class AuthService {
     public AuthService(UserRepository userRepository, CustomerRepository customerRepository,
                        OrganizerRepository organizerRepository, CustomerMapper customerMapper,
                        OrganizerMapper organizerMapper, JwtService jwtService,
-                       PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+                       PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
+                       UserValidationService userValidationService) {
         this.userRepository = userRepository;
         this.customerRepository = customerRepository;
         this.organizerRepository = organizerRepository;
@@ -46,24 +51,21 @@ public class AuthService {
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.userValidationService = userValidationService;
     }
 
     public AuthResponse login(LoginRequest loginRequest) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginRequest.getEmail(), loginRequest.getPassword()));
-        UserEntity userEntity = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("Credenciales incorrectas"));
+        UserEntity userEntity = (UserEntity) authentication.getPrincipal();
         var jwtToken = jwtService.generateToken(userEntity);
         return new AuthResponse(jwtToken);
     }
 
     public AuthResponse registerCustomer(CustomerCreateDTO customerCreateDTO) {
-        if (userRepository.existsByEmail(customerCreateDTO.getEmail())) {
-            throw new UserAlreadyExistsException("El Email ya esta en uso");
-        }
-        if (!customerCreateDTO.getPassword().equals(customerCreateDTO.getConfirmPassword())) {
-            throw new PasswordMismatchException("Las contraseñas no coinciden");
-        }
+        userValidationService.ValidateExistEmail(customerCreateDTO.getEmail());
+        userValidationService.ValidatePasswordMatch(
+                customerCreateDTO.getPassword(), customerCreateDTO.getConfirmPassword());
         CustomerEntity customerEntity = customerMapper.createDTOToEntity(customerCreateDTO);
         customerEntity.setRole(UserRole.CUSTOMER);
         customerEntity.setPassword(passwordEncoder.encode(customerEntity.getPassword()));
@@ -74,12 +76,9 @@ public class AuthService {
     }
 
     public AuthResponse registerOrganizer(OrganizerCreateDTO organizerCreateDTO) {
-        if (userRepository.existsByEmail(organizerCreateDTO.getEmail())) {
-            throw new UserAlreadyExistsException("El Email ya esta en uso");
-        }
-        if (!organizerCreateDTO.getPassword().equals(organizerCreateDTO.getConfirmPassword())) {
-            throw new PasswordMismatchException("Las contraseñas no coinciden");
-        }
+        userValidationService.ValidateExistEmail(organizerCreateDTO.getEmail());
+        userValidationService.ValidatePasswordMatch(
+                organizerCreateDTO.getPassword(), organizerCreateDTO.getConfirmPassword());
         OrganizerEntity organizerEntity = organizerMapper.createDTOToEntity(organizerCreateDTO);
         organizerEntity.setRole(UserRole.ORGANIZER);
         organizerEntity.setPassword(passwordEncoder.encode(organizerEntity.getPassword()));
@@ -90,11 +89,8 @@ public class AuthService {
     }
 
     public void resetPassword(ResetPasswordRequest request) {
-        UserEntity userEntity = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("El Usuario no existe"));
-        if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new PasswordMismatchException("Las contraseñas no coinciden");
-        }
+        UserEntity userEntity = userValidationService.ValidateUser(request.getEmail());
+        userValidationService.ValidatePasswordMatch(request.getPassword(), request.getConfirmPassword());
         userEntity.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(userEntity);
     }
